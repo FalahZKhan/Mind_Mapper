@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Divide and Conquer Algorithms</title>
+  <link rel="stylesheet" href="static/view.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Divide and Conquer Algorithms</h1>
+
+    <!-- File Upload -->
+    <div class="input-section">
+      <h2>Upload Input File</h2>
+      <input type="file" id="fileInput" accept=".txt">
+    </div>
+
+    <!-- Algorithm Selection -->
+    <div class="algorithm-section">
+      <h2>Select Algorithm</h2>
+      <button id="closestPairBtn">Find Closest Pair of Points</button>
+      <button id="multiplyIntegersBtn">Integer Multiplication</button>
+    </div>
+
+    <!-- Visualization -->
+    <div class="visualization-section">
+      <h2>Visualization</h2>
+      <canvas id="canvas" width="800" height="600"></canvas>
+    </div>
+
+    <!-- Result Display -->
+    <div class="result-section">
+      <h2>Result</h2>
+      <div id="result"></div>
+      <div id="complexity">
+        <h3>Complexity:</h3>
+        <p id="timeComplexity"></p>
+        <p id="spaceComplexity"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let parsedPoints = [];
+    let parsedIntegers = [];
+
+    // Fetch file input
+    document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+
+    // Algorithm selection buttons
+    document.getElementById('closestPairBtn').addEventListener('click', findClosestPair);
+    document.getElementById('multiplyIntegersBtn').addEventListener('click', multiplyIntegers);
+
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const content = e.target.result;
+        parseInput(content);
+      };
+
+      reader.readAsText(file);
+    }
+    function parseInput(content) {
+  const lines = content.split("\n").map(line => line.trim()).filter(line => line);
+  const numbers = lines.flatMap(line => line.split(" ").map(Number));
+
+  if (numbers.length === 2) {
+    // If there are exactly two numbers, treat them as integers for multiplication
+    parsedPoints = numbers;
+  } else {
+    // Otherwise, treat the data as points for the closest pair algorithm
+    parsedPoints = [];
+    for (let i = 0; i < numbers.length; i += 2) {
+      parsedPoints.push([numbers[i], numbers[i + 1]]);
+    }
+  }
+}
+
+function multiplyIntegers() {
+  if (parsedPoints.length !== 2) {
+    alert("Please upload a valid file with exactly two integers.");
+    return;
+  }
+
+  const [x, y] = parsedPoints;
+
+  fetch('/api/integer-multiplication', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ x, y })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      document.getElementById('result').innerHTML = `Error: ${data.error}`;
+    } else {
+      document.getElementById('result').innerHTML = `Result of Integer Multiplication: ${data.result}`;
+      document.getElementById('timeComplexity').innerHTML = "Time Complexity: O(n^log3) (Karatsuba)";
+      document.getElementById('spaceComplexity').innerHTML = "Space Complexity: O(n)";
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+}
+    function parseInput(content) {
+      const values = content.trim().split(/\s+/).map(Number);
+
+      if (values.length === 2) {
+        // Two numbers for integer multiplication
+        parsedIntegers = values;
+        parsedPoints = [];  // Clear points if integers are found
+        console.log("Parsed integers:", parsedIntegers);
+      } else {
+        // Multiple points for closest pair algorithm
+        parsedPoints = [];
+        for (let i = 0; i < values.length; i += 2) {
+          parsedPoints.push([values[i], values[i + 1]]);
+        }
+        parsedIntegers = [];  // Clear integers if points are found
+        console.log("Parsed points:", parsedPoints);
+      }
+    }
+
+    function findClosestPair() {
+      if (parsedPoints.length === 0) {
+        alert("Please upload a valid file with points.");
+        return;
+      }
+
+      fetch('/api/closest-pair', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ points: parsedPoints })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          document.getElementById('result').innerHTML = `Error: ${data.error}`;
+        } else {
+          const { closest_pair, distance } = data;
+          document.getElementById('result').innerHTML = `
+            Closest Pair: (${closest_pair[0][0]}, ${closest_pair[0][1]}) and (${closest_pair[1][0]}, ${closest_pair[1][1]})<br>
+            Distance: ${distance}
+          `;
+
+          document.getElementById('timeComplexity').innerHTML = "Time Complexity: O(n log n)";
+          document.getElementById('spaceComplexity').innerHTML = "Space Complexity: O(n)";
+          visualizeClosestPair(closest_pair);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    }
+
+    function multiplyIntegers() {
+      if (parsedIntegers.length !== 2) {
+        alert("Please upload a file with exactly two integers.");
+        return;
+      }
+
+      fetch('/api/integer-multiplication', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ integers: parsedIntegers })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          document.getElementById('result').innerHTML = `Error: ${data.error}`;
+        } else {
+          const { result } = data;
+          document.getElementById('result').innerHTML = `Multiplication Result: ${result}`;
+
+          document.getElementById('timeComplexity').innerHTML = "Time Complexity: O(log n)";
+          document.getElementById('spaceComplexity').innerHTML = "Space Complexity: O(log n)";
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    }
+
+    function visualizeClosestPair(pair) {
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      parsedPoints.forEach(point => {
+        ctx.beginPath();
+        ctx.arc(point[0], point[1], 5, 0, Math.PI * 2);
+        ctx.fillStyle = "white";
+        ctx.fill();
+      });
+
+      ctx.beginPath();
+      ctx.moveTo(pair[0][0], pair[0][1]);
+      ctx.lineTo(pair[1][0], pair[1][1]);
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  </script>
+</body>
+</html>
