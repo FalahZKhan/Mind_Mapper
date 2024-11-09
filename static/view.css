@@ -1,13 +1,13 @@
 /* General body styles */
 body {
   background: url('mapMind.png') no-repeat center center fixed;
+  backdrop-filter: blur(10px);
   background-size: cover;
   font-family: 'Montserrat', sans-serif;
   margin: 0;
   padding: 0;
   display: flex;
   justify-content: center;
-  align-items: center;
   min-height: 100vh;
   color: #00ff99; /* Neon green text */
   overflow-x: hidden;
@@ -15,14 +15,8 @@ body {
 
 /* Container styles */
 .container {
-  background: rgba(0, 0, 0, 0.75);
   padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  width: 90%;
-  max-width: 900px;
+  width: 100%;
   text-align: center;
   color: #00ff99;
 }
@@ -32,7 +26,8 @@ h1 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
   color: #00ffcc;
-  text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+  text-shadow: 0 0 0px #28af94, 0 0 20px #28af94;
+  font-family: 'Poppins';
 }
 
 /* Input section */
@@ -56,26 +51,8 @@ input[type="file"] {
 }
 
 .algorithm-section button:hover {
-  background-color: #00cc88;
+  background-color: #2e8669;
   box-shadow: 0 0 15px #00ff99;
-}
-
-/* Canvas styling */
-#canvas-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-#canvas {
-  background-color: rgba(0, 0, 0, 0.8);
-  border-radius: 10px;
-  border: 2px solid #00ffcc;
-  box-shadow: 0 0 20px #00ffcc;
-  width: 100%;
-  max-width: 800px;
-  aspect-ratio: 16/9;
 }
 
 /* Result section styling */
@@ -116,4 +93,19 @@ input[type="file"] {
   #canvas {
     aspect-ratio: 1/1;
   }
+}
+
+@font-face {
+  font-family: 'DeepOver';
+  src: url('/static/fonts/Deep-Shadow-Over.ttf') format("truetype");
+}
+
+@font-face {
+  font-family: 'DeepUnder';
+  src: url('/static/fonts/Deep-Shadow-Under.ttf') format("truetype");
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/static/fonts/Poppins.ttf') format("truetype");
 }

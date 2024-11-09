@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Arrow link to home page -->
+<a href="/" style="position: absolute; top: 20px; left: 30px; font-size: 1.5em; color: rgb(255, 255, 255); text-decoration: none;">
+    <h1 style="font-size: 1em;">&lt; Go to Dashboard</h1>
+</a> 
+
+<div style="position: relative; display: inline-block; white-space: nowrap; margin-bottom: 1%; margin-top: 2%;">
+    <h1
+        style="font-family: DeepUnder; color: black; margin: 0; padding: 0; letter-spacing: 4px; font-size: 3em; padding-top: 3%;">
+        CLOSEST PAIR OF POINTS</h1>
+    <h1
+        style="font-family: DeepOver; color: white; position: absolute; top: 0; left: 0; margin: 0; padding: 0; letter-spacing: 4px; font-weight: lighter; font-size: 3em; padding-top: 3%;">
+        CLOSEST PAIR OF POINTS</h1>
+</div>
+
+<h1 style="font-family: Poppins; font-size: 1.8em;">Upload File</h1>
+
+<!-- Message that will be shown after form submission -->
+<div id="uploadMessage" style="font-family: Poppins; font-size: 1.2em; color: white; display: none;">
+    This may take a few moments. Please wait...
+</div>
+
+<form style="font-family: Poppins;" method="POST" enctype="multipart/form-data" onsubmit="showMessage()">
+    <input style="font-size: 1em; font-family: Poppins; padding: 1%;" type="file" name="file" accept=".txt" required>
+    <button style="font-size: 1em; font-family: Poppins; padding: 0.8%; cursor: pointer;" type="submit">Upload</button>
+</form>
+
+{% if closest_pair %}
+
+<h1 style="font-family: Poppins; font-size: 1.3em;">Closest Pair: ({{ closest_pair[0][0] }}, {{ closest_pair[0][1] }})
+    and ({{ closest_pair[1][0] }}, {{ closest_pair[1][1] }}), Distance: {{ "%.2f"|format(distance) }}</h1>
+
+<!-- Loop through plot files and display images with step label -->
+<div id="imageContainer">
+    {% for plot_file in plot_files %}
+    <div style="text-align: center; margin-bottom: 2em;">
+        <h2 style="color: white; font-family: Poppins; font-size: 1.5em;">Step {{ loop.index }}</h2>
+        <img src="{{ url_for('static', filename='plots/' + plot_file) }}" alt="Closest Pair Plot">
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<script>
+    function showMessage() {
+        // Display the upload message when the form is submitted
+        document.getElementById('uploadMessage').style.display = 'block';
+
+        // Remove currently rendered images before the upload
+        document.getElementById('imageContainer').innerHTML = '';
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Integer Multiplication{% endblock %}
+
+{% block content %}
+<a href="/" style="position: absolute; top: 30px; left: 30px; font-size: 1.5em; color: rgb(255, 255, 255); text-decoration: none;">
+    <h1 style="font-size: 1em;">&lt; Go to Dashboard</h1>
+</a> 
+
+<div style="position: relative; display: inline-block; white-space: nowrap; margin-bottom: 1%; margin-top: 2%;">
+    <h1
+        style="font-family: DeepUnder; color: black; margin: 0; padding: 0; letter-spacing: 4px; font-size: 3em; padding-top: 3%;">
+        INTEGER MULTIPLICATION</h1>
+    <h1
+        style="font-family: DeepOver; color: white; position: absolute; top: 0; left: 0; margin: 0; padding: 0; letter-spacing: 4px; font-weight: lighter; font-size: 3em; padding-top: 3%;">
+        INTEGER MULTIPLICATION</h1>
+</div>
+
+<!-- Input section -->
+<div style="margin-top: 2rem;">
+    <input type="file" id="fileInput" accept=".txt" style="margin-bottom: 1rem;">
+    <button onclick="multiplyIntegers()" style="padding: 0.5rem 1rem; cursor: pointer;">Calculate Multiplication</button>
+</div>
+
+<!-- Result section -->
+<div class="result-section" style="margin-top: 2rem;">
+    <h2>Result</h2>
+    <div id="result" style="margin-bottom: 1rem;"></div>
+    <div id="complexity">
+        <h3>Complexity:</h3>
+        <p id="timeComplexity"></p>
+        <p id="spaceComplexity"></p>
+    </div>
+</div>
+{% endblock %}
