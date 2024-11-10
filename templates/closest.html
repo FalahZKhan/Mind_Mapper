@@ -4,15 +4,11 @@
 <!-- Arrow link to home page -->
 <a href="/" style="position: absolute; top: 20px; left: 30px; font-size: 1.5em; color: rgb(255, 255, 255); text-decoration: none;">
     <h1 style="font-size: 1em;">&lt; Go to Dashboard</h1>
-</a> 
+</a>
 
 <div style="position: relative; display: inline-block; white-space: nowrap; margin-bottom: 1%; margin-top: 2%;">
-    <h1
-        style="font-family: DeepUnder; color: black; margin: 0; padding: 0; letter-spacing: 4px; font-size: 3em; padding-top: 3%;">
-        CLOSEST PAIR OF POINTS</h1>
-    <h1
-        style="font-family: DeepOver; color: white; position: absolute; top: 0; left: 0; margin: 0; padding: 0; letter-spacing: 4px; font-weight: lighter; font-size: 3em; padding-top: 3%;">
-        CLOSEST PAIR OF POINTS</h1>
+    <h1 style="font-family: DeepUnder; color: black; margin: 0; padding: 0; letter-spacing: 4px; font-size: 3em; padding-top: 3%;">CLOSEST PAIR OF POINTS</h1>
+    <h1 style="font-family: DeepOver; color: white; position: absolute; top: 0; left: 0; margin: 0; padding: 0; letter-spacing: 4px; font-weight: lighter; font-size: 3em; padding-top: 3%;">CLOSEST PAIR OF POINTS</h1>
 </div>
 
 <h1 style="font-family: Poppins; font-size: 1.8em;">Upload File</h1>
@@ -28,29 +24,82 @@
 </form>
 
 {% if closest_pair %}
+<h1 id="closestPair" style="font-family: Poppins; font-size: 1.3em;">
+    Closest Pair: ({{ closest_pair[0][0] }}, {{ closest_pair[0][1] }}) and ({{ closest_pair[1][0] }}, {{ closest_pair[1][1] }}), Distance: {{ "%.2f"|format(distance) }}
+</h1>
 
-<h1 style="font-family: Poppins; font-size: 1.3em;">Closest Pair: ({{ closest_pair[0][0] }}, {{ closest_pair[0][1] }})
-    and ({{ closest_pair[1][0] }}, {{ closest_pair[1][1] }}), Distance: {{ "%.2f"|format(distance) }}</h1>
 
-<!-- Loop through plot files and display images with step label -->
-<div id="imageContainer">
-    {% for plot_file in plot_files %}
-    <div style="text-align: center; margin-bottom: 2em;">
-        <h2 style="color: white; font-family: Poppins; font-size: 1.5em;">Step {{ loop.index }}</h2>
-        <img src="{{ url_for('static', filename='plots/' + plot_file) }}" alt="Closest Pair Plot">
+<!-- Modal for Image Display -->
+<div id="imageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="position: relative; max-width: 80%; max-height: 80%; text-align: center;">
+        <span onclick="closeModal()" style="position: absolute; top: 10px; right: 20px; font-size: 2em; cursor: pointer;">&times;</span>
+        <button onclick="previousImage()" style="position: absolute; left: -50px; top: 50%; transform: translateY(-50%); font-size: 2em; cursor: pointer; background: none; border: none; color: white;">&lt;</button>
+        <img id="modalImage" src="" alt="Closest Pair Plot" style="max-width: 100%; max-height: 100%;">
+        <button onclick="nextImage()" style="position: absolute; right: -50px; top: 50%; transform: translateY(-50%); font-size: 2em; cursor: pointer; background: none; border: none; color: white;">&gt;</button>
+        <h2 id="stepLabel" style="color: rgb(255, 255, 255); font-family: Poppins; font-size: 1.5em; margin-top: 10px;">Step 1</h2>
     </div>
-    {% endfor %}
 </div>
+
+<!-- Button to open the modal -->
+<button id="viewDiagramButton" onclick="openModal()" style="font-size: 1em; font-family: Poppins; padding: 0.8%; cursor: pointer;">View Step By Step Plots</button>
+
 {% endif %}
 
-<script>
-    function showMessage() {
-        // Display the upload message when the form is submitted
-        document.getElementById('uploadMessage').style.display = 'block';
+<script type="text/javascript">
+    let plotFiles = JSON.parse('{{plot_files | tojson}}');
+    console.log(plotFiles);
+   
+    let currentIndex = 0;
 
-        // Remove currently rendered images before the upload
-        document.getElementById('imageContainer').innerHTML = '';
+    function openModal() {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const stepLabel = document.getElementById('stepLabel');
+
+        if (plotFiles.length > 0) {
+            modal.style.display = 'flex';
+            modalImage.src = "{{ url_for('static', filename='plots/') }}" + plotFiles[currentIndex];
+            stepLabel.textContent = "Step " + (currentIndex + 1);
+        }
     }
+
+    function closeModal() {
+        document.getElementById('imageModal').style.display = 'none';
+    }
+
+    function updateImage() {
+        const modalImage = document.getElementById('modalImage');
+        const stepLabel = document.getElementById('stepLabel');
+        if (plotFiles.length > 0) {
+            modalImage.src = "{{ url_for('static', filename='plots/') }}" + plotFiles[currentIndex];
+            stepLabel.textContent = "Step " + (currentIndex + 1);
+        }
+    }
+
+    function previousImage() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateImage();
+        }
+    }
+
+    function nextImage() {
+        if (currentIndex < plotFiles.length - 1) {
+            currentIndex++;
+            updateImage();
+        }
+    }
+
+    function showMessage() {
+        document.getElementById('uploadMessage').style.display = 'block';
+        // Hide the closest pair info when file is uploaded
+        document.getElementById('closestPair').style.display = 'none';
+        // Hide the View Diagram button when the upload is clicked
+        document.getElementById('viewDiagramButton').style.display = 'none';
+    }
+
+    // Open the modal when the page loads
+    window.onload = openModal;
 </script>
 
 {% endblock %}

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Integer Multiplication{% endblock %}
-
 {% block content %}
-<a href="/" style="position: absolute; top: 30px; left: 30px; font-size: 1.5em; color: rgb(255, 255, 255); text-decoration: none;">
+<!-- Arrow link to home page -->
+<a href="/"
+    style="position: absolute; top: 20px; left: 30px; font-size: 1.5em; color: rgb(255, 255, 255); text-decoration: none;">
     <h1 style="font-size: 1em;">&lt; Go to Dashboard</h1>
-</a> 
+</a>
 
 <div style="position: relative; display: inline-block; white-space: nowrap; margin-bottom: 1%; margin-top: 2%;">
     <h1
@@ -16,20 +16,101 @@
         INTEGER MULTIPLICATION</h1>
 </div>
 
-<!-- Input section -->
-<div style="margin-top: 2rem;">
-    <input type="file" id="fileInput" accept=".txt" style="margin-bottom: 1rem;">
-    <button onclick="multiplyIntegers()" style="padding: 0.5rem 1rem; cursor: pointer;">Calculate Multiplication</button>
+<h1 style="font-family: Poppins; font-size: 1.8em;">Upload File</h1>
+
+<!-- Message shown after form submission -->
+<div id="uploadMessage" style="font-family: Poppins; font-size: 1.2em; color: white; display: none;">
+    This may take a few moments. Please wait...
 </div>
 
-<!-- Result section -->
-<div class="result-section" style="margin-top: 2rem;">
-    <h2>Result</h2>
-    <div id="result" style="margin-bottom: 1rem;"></div>
-    <div id="complexity">
-        <h3>Complexity:</h3>
-        <p id="timeComplexity"></p>
-        <p id="spaceComplexity"></p>
+<form style="font-family: Poppins;" method="POST" enctype="multipart/form-data" onsubmit="showMessage()">
+    <input style="font-size: 1em; font-family: Poppins; padding: 1%;" type="file" name="file" accept=".txt" required>
+    <button style="font-size: 1em; font-family: Poppins; padding: 0.8%; cursor: pointer;" type="submit">Upload</button>
+</form>
+
+{% if result %}
+<h1 id="multiplicationResult" style="font-family: Poppins; font-size: 1.3em;">
+    Result: {{ result }}
+</h1>
+
+<!-- Modal for Image Display -->
+<div id="imageModal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="position: relative; max-width: 80%; max-height: 80%; text-align: center;">
+        <span onclick="closeModal()"
+            style="position: absolute; top: 10px; right: 20px; font-size: 2em; cursor: pointer;">&times;</span>
+        <button onclick="previousImage()"
+            style="position: absolute; left: -50px; top: 50%; transform: translateY(-50%); font-size: 2em; cursor: pointer; background: none; border: none; color: white;">&lt;</button>
+        <img id="modalImage" src="" alt="Closest Pair Plot" style="max-width: 100%; max-height: 100%;">
+        <button onclick="nextImage()"
+            style="position: absolute; right: -50px; top: 50%; transform: translateY(-50%); font-size: 2em; cursor: pointer; background: none; border: none; color: white;">&gt;</button>
+        <h2 id="stepLabel" style="color: rgb(255, 255, 255); font-family: Poppins; font-size: 1.5em; margin-top: 10px;">
+            Step 1</h2>
     </div>
 </div>
+
+<!-- Button to open the modal -->
+<button id="viewDiagramButton" onclick="openModal()"
+    style="font-size: 1em; font-family: Poppins; padding: 0.8%; cursor: pointer;">View Step-by-Step
+    Multiplication</button>
+
+{% endif %}
+
+<script type="text/javascript">
+    let karatsubaFiles = JSON.parse('{{karatsuba_files | tojson}}');
+    console.log(karatsubaFiles);
+
+    let currentIndex = 1;
+
+    function openModal() {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const stepLabel = document.getElementById('stepLabel');
+
+        if (karatsubaFiles.length > 0) {
+            modal.style.display = 'flex';
+            modalImage.src = "{{ url_for('static', filename='karatsuba/') }}" + karatsubaFiles[currentIndex];
+            stepLabel.textContent = "Step " + (currentIndex);
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('imageModal').style.display = 'none';
+    }
+
+    function updateImage() {
+        const modalImage = document.getElementById('modalImage');
+        const stepLabel = document.getElementById('stepLabel');
+        if (karatsubaFiles.length > 0) {
+            modalImage.src = "{{ url_for('static', filename='karatsuba/') }}" + karatsubaFiles[currentIndex];
+            stepLabel.textContent = "Step " + (currentIndex);
+        }
+    }
+
+    function previousImage() {
+        if (currentIndex > 1) {
+            currentIndex--;
+            updateImage();
+        }
+    }
+
+    function nextImage() {
+        if (currentIndex < karatsubaFiles.length - 1) {
+            currentIndex++;
+            updateImage();
+        }
+    }
+
+    function showMessage() {
+        document.getElementById('uploadMessage').style.display = 'block';
+        // Hide the closest pair info when file is uploaded
+        document.getElementById('closestPair').style.display = 'none';
+        // Hide the View Diagram button when the upload is clicked
+        document.getElementById('viewDiagramButton').style.display = 'none';
+    }
+
+    // Open the modal when the page loads
+    window.onload = openModal;
+</script>
+
 {% endblock %}
