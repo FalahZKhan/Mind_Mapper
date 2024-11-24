@@ -21,46 +21,26 @@ os.makedirs('closest_pair_inputs', exist_ok=True)
 os.makedirs('integer_multiplication_inputs', exist_ok=True)
 
 # Generate input files for the closest pair of points problem
-for i in range(10):
-    num_points = random.randint(100, 200)  # Number of points between 100 and 200
+point_counts = range(100, 901, 100)  # 100 to 800 points in increments of 100
+for i, num_points in enumerate(point_counts):
     range_limit = 1000
-    
-    # Create various complexities and edge cases
-    if i < 3:
-        points = generate_random_points(num_points, range_limit, clustered=False)
-    elif i < 6:
-        points = generate_random_points(num_points, range_limit, clustered=True)
-    elif i < 8:
-        # Points that align closely on a single line
-        points = [(x, x) for x in range(num_points)]
-    else:
-        # Duplicate points edge case
-        duplicate_point = (random.randint(0, range_limit), random.randint(0, range_limit))
-        points = [duplicate_point for _ in range(num_points)]
+    # Create points with random distribution
+    points = generate_random_points(num_points, range_limit, clustered=False)
 
     # Save points to a text file
-    with open(f'closest_pair_inputs/points_input_{i+1}.txt', 'w') as f:
+    with open(f'closest_pair_inputs/points_input_{num_points}.txt', 'w') as f:
         for x, y in points:
             f.write(f"{x} {y}\n")
 
 # Generate input files for the integer multiplication problem
-for i in range(10):
-    # Different complexities and edge cases for integer multiplication
-    if i < 3:
-        # Large random numbers
-        num1 = generate_random_large_integers(100)
-        num2 = generate_random_large_integers(100)
-    elif i < 6:
-        # Leading and trailing zero cases
-        num1 = int(str(generate_random_large_integers(98)) + "00")
-        num2 = int("00" + str(generate_random_large_integers(98)))
-    else:
-        # Extremely large numbers (up to 500 digits)
-        num1 = generate_random_large_integers(500)
-        num2 = generate_random_large_integers(500)
+digit_counts = range(10, 101, 10)  # 10 to 100 digits in increments of 10
+for i, digit_count in enumerate(digit_counts):
+    # Generate large random numbers
+    num1 = generate_random_large_integers(digit_count)
+    num2 = generate_random_large_integers(digit_count)
     
     # Save numbers to a text file
-    with open(f'integer_multiplication_inputs/integers_input_{i+1}.txt', 'w') as f:
+    with open(f'integer_multiplication_inputs/integers_input_{digit_count}_digits.txt', 'w') as f:
         f.write(f"{num1}\n{num2}\n")
 
 print("Sample input files generated successfully.")
