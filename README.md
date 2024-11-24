@@ -2,7 +2,7 @@
 
 # Mind Mapper
 
-A computational platform implementing two key algorithms: the Closest Pair Problem and Karatsuba Integer Multiplication. This project leverages Flask for the backend and Matplotlib for visualization, providing an interactive experience to explore the divide-and-conquer methodology.
+A computational platform implementing two key algorithms: the Closest Pair Problem and Karatsuba Integer Multiplication. This project leverages Flask for the backend and Matplotlib and HTML CSS for visualization, providing an interactive experience to explore the divide-and-conquer methodology.
 
 ---
 
@@ -54,34 +54,6 @@ The system is divided into two main modules:
 2. **Backend Algorithms**: Executes Closest Pair and Karatsuba algorithms, storing intermediate results.
 3. **Visualization Module**: Generates stepwise plots to illustrate algorithmic progress.
 4. **Static Storage**: Manages uploaded files and plot images for display.
-
----
-
-## Closest Pair of Points
-### Algorithm
-1. **Divide**: Sort points by x-coordinates and split into two halves.
-2. **Conquer**: Recursively solve for the closest pair in both halves.
-3. **Combine**: Create a strip near the dividing line and check distances to find the closest pair.
-4. **Result**: Compare strip results with left and right half results to determine the overall closest pair.
-
-### Time Complexity
-- \( O(n \log n) \)
-
----
-
-## Karatsuba Integer Multiplication
-### Algorithm
-1. **Split Numbers**: Split numbers \(X\) and \(Y\) into high and low parts:
-   - \(X = X_1 \cdot 10^{n/2} + X_0\)
-   - \(Y = Y_1 \cdot 10^{n/2} + Y_0\)
-2. **Recursive Multiplications**:
-   - \(P1 = X_1 \cdot Y_1\)
-   - \(P2 = X_0 \cdot Y_0\)
-   - \(P3 = (X_1 + X_0) \cdot (Y_1 + Y_0)\)
-3. **Combine Results**:
-   - \(XY = P1 \cdot 10^n + (P3 - P1 - P2) \cdot 10^{n/2} + P2\)
-
----
 
 ## Execution Times
 ### Closest Pair Execution Times
